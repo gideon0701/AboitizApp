@@ -3,6 +3,7 @@ package com.pentagon.myapplication;
 import android.util.Log;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -15,10 +16,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
     private static Retrofit retrofit = null;
+    private final static String API_URL = "https://api-dev.weathersolutions.ph/api/v1/forecast/";
 
     static Retrofit getClient() {
         try{
             OkHttpClient.Builder oktHttpClient = new OkHttpClient.Builder();
+            oktHttpClient.readTimeout(60, TimeUnit.SECONDS);
+            oktHttpClient.connectTimeout(60, TimeUnit.SECONDS);
             oktHttpClient.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -32,7 +36,7 @@ public class APIClient {
             });
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://api-dev.weathersolutions.ph/api/v1/forecast/")
+                    .baseUrl(MessageFormat.format("{0}",API_URL))
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(oktHttpClient.build())
                     .build();
